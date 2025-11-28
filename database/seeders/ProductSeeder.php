@@ -76,7 +76,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'category_id' => $kleidung->id,
-                'name' => 'Wintjacke',
+                'name' => 'Winterjacke',
                 'description' => 'Warme Winterjacke mit wasserabweisender Oberfläche. Perfekt für kalte Tage.',
                 'price' => 149.99,
                 'stock' => 25,
