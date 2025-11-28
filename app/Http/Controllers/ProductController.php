@@ -21,47 +21,30 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories'));
     }
 
-    // Produkt zum Warenkorb hinzufügen
-    public function add($id)
+    // Anzeigen eines Produkts
+    public function show($slug)
     {
-        $product = Product::where('id', $id)
+        $product = Product::where('slug', $slug)
             ->where('is_active', true)
+            ->with('category')
             ->firstOrFail();
 
-        $cart = session()->get('cart', []);
-
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-        } else {
-            $cart[$id] = [
-                'product' => $product,
-                'quantity' => 1,
-            ];
-        }
-
-        session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Produkt zum Warenkorb hinzugefügt');
+        return view('products.show', compact('product'));
     }
 
-    // Produkt aus dem Warenkorb entfernen
-    public function remove($id)
+    // Anzeigen der Produkte einer Kategorie
+    public function category($slug)
     {
-        $cart = session()->get('cart', []);
+        $category = Category::where('slug', $slug)->firstOrFail();
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
-        }
+        $products = Product::where('category_id', $category->id)
+            ->where('is_active', true)
+            ->with('category')
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
 
-        return redirect()->route('cart.index')->with('success', 'Produkt aus dem Warenkorb entfernt!');
-    }
+        $categories = Category::all();
 
-    // Warenkorb leeren
-    public function clear()
-    {
-        session()->forget('cart');
-
-        return redirect()->route('cart.index')->with('success', 'Warenkorb geleert!');
+        return view('products.index', compact('products', 'categories', 'category'));
     }
 }
