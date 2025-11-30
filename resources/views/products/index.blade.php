@@ -24,17 +24,34 @@
 
         <!-- Hauptbereich: Produkte -->
         <section class="lg:w-3/4">
-            <h1 class="text-2xl font-semibold mb-6">
-                @isset($category)
-                    Kategorie: {{ $category->name }}
-                @else
-                    Alle Produkte
-                @endisset
-            </h1>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold">
+                    @isset($category)
+                        Kategorie: {{ $category->name }}
+                    @else
+                        Alle Produkte
+                    @endisset
+                </h1>
+                
+                @if(request('search'))
+                    <div class="text-sm text-gray-600">
+                        <span class="font-medium">{{ $products->total() }}</span> 
+                        Ergebnis{{ $products->total() !== 1 ? 'se' : '' }} für 
+                        <span class="font-semibold">"{{ request('search') }}"</span>
+                    </div>
+                @endif
+            </div>
 
             @if ($products->isEmpty())
                 <div class="bg-white shadow p-6 rounded text-center text-gray-500">
-                    Keine Produkte gefunden.
+                    @if(request('search'))
+                        <p class="mb-4">Keine Produkte gefunden für "{{ request('search') }}".</p>
+                        <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-800">
+                            Alle Produkte anzeigen
+                        </a>
+                    @else
+                        Keine Produkte gefunden.
+                    @endif
                 </div>
             @else
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
