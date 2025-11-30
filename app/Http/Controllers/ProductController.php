@@ -9,12 +9,22 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     // Anzeigen der Produkte
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::where('is_active', true)
-            ->with('category')
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+        $query = Product::where('is_active', true)
+            ->with('category');
+
+        // Suche durchführen
+        if ($request->has('search') && $request->search) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // WICHTIG: Die Query mit Suche verwenden, nicht eine neue erstellen!
+        $products = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
 
         $categories = Category::all();
 
@@ -33,15 +43,24 @@ class ProductController extends Controller
     }
 
     // Anzeigen der Produkte einer Kategorie
-    public function category($slug)
+    public function category(Request $request, $slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
 
-        $products = Product::where('category_id', $category->id)
+        $query = Product::where('category_id', $category->id)
             ->where('is_active', true)
-            ->with('category')
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+            ->with('category');
+
+        // Suche auch in Kategorien unterstützen
+        if ($request->has('search') && $request->search) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        $products = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
 
         $categories = Category::all();
 
