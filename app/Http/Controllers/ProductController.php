@@ -23,9 +23,41 @@ class ProductController extends Controller
             });
         }
 
-        // WICHTIG: Die Query mit Suche verwenden, nicht eine neue erstellen!
-        $products = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
+        // Filter: Nur verfügbare Produkte
+        if ($request->has('available') && $request->available == '1') {
+            $query->where('stock', '>', 0);
+        }
 
+        // Filter: Preisbereich
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Sortierung
+        $sortBy = $request->get('sort', 'newest');
+        switch ($sortBy) {
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::all();
 
         return view('products.index', compact('products', 'categories'));
@@ -60,8 +92,41 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
+        // Filter: Nur verfügbare Produkte
+        if ($request->has('available') && $request->available == '1') {
+            $query->where('stock', '>', 0);
+        }
 
+        // Filter: Preisbereich
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Sortierung
+        $sortBy = $request->get('sort', 'newest');
+        switch ($sortBy) {
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::all();
 
         return view('products.index', compact('products', 'categories', 'category'));
