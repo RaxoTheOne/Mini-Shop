@@ -12,10 +12,25 @@
             <!-- Produktbild (optional, falls vorhanden) -->
             <div class="md:w-1/2 p-6 bg-gray-50">
                 @if($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                        class="w-full h-auto rounded">
+                    @php
+                        $imageUrl = asset('storage/' . $product->image);
+                    @endphp
+                    <!-- Test: Einfaches Bild ohne komplexe CSS-Klassen -->
+                    <div
+                        style="width: 100%; background: #f9fafb; padding: 10px; border-radius: 8px; border: 2px solid #e5e7eb;">
+                        <img src="{{ $imageUrl }}" alt="{{ $product->name }}"
+                            style="width: 100%; height: auto; display: block; border-radius: 4px;"
+                            onload="console.log('✓ Bild erfolgreich geladen!', this.src); this.parentElement.style.borderColor='#10b981';"
+                            onerror="console.error('✗ FEHLER beim Laden:', this.src, event); alert('Bild konnte nicht geladen werden: ' + this.src);">
+                    </div>
+                    <p class="mt-2 text-xs text-center text-gray-500">
+                        <a href="{{ $imageUrl }}" target="_blank" class="text-blue-600 hover:underline">
+                            Bild direkt öffnen: {{ $imageUrl }}
+                        </a>
+                    </p>
                 @else
-                    <div class="w-full h-64 bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                    <div
+                        class="w-full h-64 bg-gray-200 rounded flex items-center justify-center text-gray-400 border border-gray-300">
                         Kein Bild verfügbar
                     </div>
                 @endif
