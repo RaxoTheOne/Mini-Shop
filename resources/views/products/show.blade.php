@@ -78,4 +78,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Ähnliche Produkte -->
+    @php
+        $similarProducts = \App\Models\Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->where('stock', '>', 0)
+            ->limit(4)
+            ->get();
+    @endphp
+
+    @if($similarProducts->count() > 0)
+        <div class="mt-12">
+            <h2 class="text-2xl font-semibold mb-6">Ähnliche Produkte</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach($similarProducts as $similarProduct)
+                    <article class="bg-white shadow rounded overflow-hidden hover:shadow-lg transition-shadow">
+                        <div class="w-full h-48 bg-gray-100 overflow-hidden">
+                            @if($similarProduct->image)
+                                <a href="{{ route('products.show', $similarProduct->slug) }}">
+                                    <img src="{{ asset('storage/' . $similarProduct->image) }}" alt="{{ $similarProduct->name }}"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                </a>
+                            @else
+                                <a href="{{ route('products.show', $similarProduct->slug) }}"
+                                    class="w-full h-full flex items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">
+                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </a>
+                            @endif
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold">
+                                <a href="{{ route('products.show', $similarProduct->slug) }}" class="hover:text-indigo-600">
+                                    {{ $similarProduct->name }}
+                                </a>
+                            </h3>
+                            <p class="text-xl font-bold text-indigo-600 mt-2">
+                                {{ number_format($similarProduct->price, 2, ',', '.') }} €
+                            </p>
+                        </div>
+                        <div class="border-t px-4 py-2 bg-gray-50">
+                            <a href="{{ route('products.show', $similarProduct->slug) }}"
+                                class="block text-center text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                                Details ansehen
+                            </a>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    @endif
 @endsection
