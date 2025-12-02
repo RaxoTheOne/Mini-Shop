@@ -67,13 +67,17 @@
                         </svg>
                         <span>Warenkorb</span>
                         @php
-                            $cartCount = count(session()->get('cart', []));
+                            $cart = session()->get('cart', []);
+                            $cartCount = 0;
+                            foreach ($cart as $item) {
+                                $cartCount += $item['quantity'];
+                            }
                         @endphp
                         @if($cartCount > 0)
-                            <span class="absolute -top-0.5 -right-0.5 bg-linear-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center shadow-lg">
-                                {{ $cartCount }}
-                            </span>
-                        @endif
+                        <span class="absolute -top-0.5 -right-0.5 bg-linear-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
                     </a>
                 </div>
             </div>
