@@ -29,11 +29,28 @@ class OrderController extends Controller
     // Bestellung speichern
     public function store(Request $request)
     {
+        // Warenkorb aus der Session holen
         $cart = session()->get('cart', []);
-
+        
+        // Prüfen ob der Warenkorb leer ist
         if (empty($cart)) {
             return redirect()->route('cart.index')
                 ->with('error', 'Dein Warenkorb ist leer!');
+        }
+
+        // Prüfe Lagerbestand für alle Produkte im Warenkorb
+        foreach ($cart as $id => $item) {
+            $product = \App\Models\Product::find($id);
+
+            if (!$product || !$product->is_active) {
+                return redirect()->route('cart.index')
+                    ->with('error', 'Ein oder mehrere Produkte im Warenkorb sind nicht mehr verfügbar.');
+            }
+
+            if ($product->stock < $item['quantity']) {
+                return redirect()->route('cart.index')
+                    ->with('error', "Nicht genügend Lagerbestand für '{$product->name}'. Verfügbar: {$product->stock} Stück.");
+            }
         }
 
         // Validierung der Bestelldaten
@@ -73,6 +90,13 @@ class OrderController extends Controller
                 'quantity' => $item['quantity'],
                 'subtotal' => $item['product']->price * $item['quantity'],
             ]);
+        }
+
+        // Lagerbestand reduzieren
+        foreach ($cart as $id => $item) {
+            $product = \App\Models\Product::find($id);
+            $product->stock -= $item['quantity'];
+            $product->save();
         }
 
         // Warenkorb leeren
