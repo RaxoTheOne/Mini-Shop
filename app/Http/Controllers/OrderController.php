@@ -109,7 +109,12 @@ class OrderController extends Controller
     // Anzeigen einer Bestellung
     public function show($id)
     {
-        $order = Order::with('orderItems.product')->findOrFail($id);
+        // Prüfe ob es eine ID oder Bestellnummer ist
+        if (is_numeric($id)) {
+            $order = Order::with('orderItems.product')->findOrFail($id);
+        } else {
+            $order = Order::with('orderItems.product')->where('order_number', $id)->firstOrFail();
+        }
 
         return view('orders.show', compact('order'));
     }
