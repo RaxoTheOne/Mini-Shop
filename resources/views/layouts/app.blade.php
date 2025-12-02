@@ -118,6 +118,22 @@
         @yield('content')
     </main>
 
+    <!-- Auto-Dissmiss für Flash Messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('[class*="bg-linear-to-r"]');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.transition = 'opacity 0.5s';
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 5000); // Nach 5 Sekunden ausblenden
+            });
+        });
+    </script>
+
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -126,7 +142,7 @@
                     &copy; {{ date('Y') }} Mini-Shop. Alle Rechte vorbehalten.
                 </p>
                 <p class="text-gray-500 text-xs mt-2">
-                    Erstellt mit ❤️ und Laravel
+                    Erstellt mit ❤️ und Laravel, Benney der Coolste Programmierer💻
                 </p>
             </div>
         </div>
