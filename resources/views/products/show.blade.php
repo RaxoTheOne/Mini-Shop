@@ -1,6 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
+    <!-- Breadcrumbs -->
+    <nav class="mb-4 text-sm" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2 text-gray-600">
+            <li>
+                <a href="{{ route('products.index') }}" class="hover:text-indigo-600">Startseite</a>
+            </li>
+            <li>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+            </li>
+            @if($product->category)
+                <li>
+                    <a href="{{ route('products.category', $product->category->slug) }}" class="hover:text-indigo-600">
+                        {{ $product->category->name }}
+                    </a>
+                </li>
+                <li>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </li>
+            @endif
+            <li class="text-gray-900 font-medium">{{ $product->name }}</li>
+        </ol>
+    </nav>
+    
     <div class="mb-4">
         <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-800">
             ← Zurück zur Übersicht
