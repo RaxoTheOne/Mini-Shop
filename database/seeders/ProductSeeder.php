@@ -134,6 +134,142 @@ class ProductSeeder extends Seeder
                 'stock' => 32,
                 'is_active' => true,
             ],
+
+            // Weitere Elektronik-Produkte
+            [
+                'category_id' => $elektronik->id,
+                'name' => 'Samsung Galaxy S24 Ultra',
+                'description' => 'Flaggschiff-Smartphone mit 256GB Speicher, 200MP Kamera und S Pen.',
+                'price' => 1249.00,
+                'stock' => 12,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $elektronik->id,
+                'name' => 'Apple AirPods Pro 2',
+                'description' => 'Noise-Cancelling Earbuds mit Spatial Audio und MagSafe Ladecase.',
+                'price' => 279.00,
+                'stock' => 25,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $elektronik->id,
+                'name' => 'iPad Air 11"',
+                'description' => 'Leistungsstarkes Tablet mit M2 Chip, 256GB Speicher und Apple Pencil Support.',
+                'price' => 799.00,
+                'stock' => 18,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $elektronik->id,
+                'name' => 'Logitech MX Master 3S',
+                'description' => 'Ergonomische Maus für Produktivität mit präziser Tracking-Technologie.',
+                'price' => 99.99,
+                'stock' => 30,
+                'is_active' => true,
+            ],
+
+            // Weitere Kleidungsstücke
+            [
+                'category_id' => $kleidung->id,
+                'name' => 'Kapuzenpullover Basic',
+                'description' => 'Bequemer Kapuzenpullover aus weicher Baumwolle. Perfekt für den Alltag.',
+                'price' => 49.99,
+                'stock' => 40,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $kleidung->id,
+                'name' => 'Sneaker Classic',
+                'description' => 'Zeitlose Sneaker im klassischen Design. Bequem und vielseitig einsetzbar.',
+                'price' => 89.99,
+                'stock' => 35,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $kleidung->id,
+                'name' => 'Wollmütze',
+                'description' => 'Warme Mütze aus 100% Merinowolle. Ideal für kalte Wintertage.',
+                'price' => 29.99,
+                'stock' => 50,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $kleidung->id,
+                'name' => 'Sportshorts',
+                'description' => 'Atmungsaktive Sportshorts mit elastischem Bund. Perfekt für Training und Sport.',
+                'price' => 34.99,
+                'stock' => 45,
+                'is_active' => true,
+            ],
+
+            // Weitere Bücher
+            [
+                'category_id' => $buecher->id,
+                'name' => 'Harry Potter - Gesamtausgabe',
+                'description' => 'Alle 7 Bände der Harry Potter Reihe in einer schönen Box.',
+                'price' => 89.99,
+                'stock' => 15,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $buecher->id,
+                'name' => 'Clean Code: A Handbook of Agile Software Craftsmanship',
+                'description' => 'Ein Klassiker für jeden Softwareentwickler. Lerne sauberen Code zu schreiben.',
+                'price' => 42.99,
+                'stock' => 28,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $buecher->id,
+                'name' => 'Die Kunst des Krieges',
+                'description' => 'Das berühmte Strategiebuch von Sun Tzu. Zeitlos und aktuell.',
+                'price' => 12.99,
+                'stock' => 60,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $buecher->id,
+                'name' => 'Laravel: The Framework Guide',
+                'description' => 'Umfassender Leitfaden für die Laravel PHP-Framework Entwicklung.',
+                'price' => 49.99,
+                'stock' => 22,
+                'is_active' => true,
+            ],
+
+            // Weitere Sport-Artikel
+            [
+                'category_id' => $sport->id,
+                'name' => 'Dumbbells Set 2x10kg',
+                'description' => 'Hantelset mit verstellbaren Gewichten. Ideal für Heimtraining.',
+                'price' => 79.99,
+                'stock' => 20,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $sport->id,
+                'name' => 'Wasserdichte Sportuhr',
+                'description' => 'Robuste Sportuhr mit GPS, Herzfrequenzmesser und vielen Sportmodi.',
+                'price' => 199.99,
+                'stock' => 15,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $sport->id,
+                'name' => 'Yoga-Block Set (2 Stück)',
+                'description' => 'Hochwertige Yoga-Blöcke aus Kork. Unterstützen bei verschiedenen Yoga-Positionen.',
+                'price' => 24.99,
+                'stock' => 38,
+                'is_active' => true,
+            ],
+            [
+                'category_id' => $sport->id,
+                'name' => 'Fitnessmatte Premium',
+                'description' => 'Extra dicke Fitnessmatte mit rutschfester Oberfläche. Ideal für Yoga und Pilates.',
+                'price' => 39.99,
+                'stock' => 42,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($products as $product) {
@@ -144,7 +280,7 @@ class ProductSeeder extends Seeder
                 'description' => $product['description'],
                 'price' => $product['price'],
                 'stock' => $product['stock'],
-                'image' => null,
+                'image' => $product['image'] ?? null,
                 'is_active' => $product['is_active'],
             ]);
         }
