@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
+<!-- Bestellbestätigungsseite -->
 @section('content')
+    <!-- Bestellübersicht -->
     <div class="bg-white shadow rounded-lg p-6 max-w-3xl mx-auto">
         <div class="text-center mb-6">
             <div class="inline-block bg-green-100 rounded-full p-3 mb-4">
@@ -12,6 +14,31 @@
             <p class="text-gray-600">Vielen Dank für deine Bestellung.</p>
         </div>
 
+        <!-- Statusanzeige -->
+        <div class="mb-6 text-center">
+            @php
+                $statusColor = [
+                    'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                    'processing' => 'bg-blue-100 text-blue-800 border-blue-300',
+                    'shipped' => 'bg-purple-100 text-purple-800 border-purple-300',
+                    'completed' => 'bg-green-100 text-green-800 border-green-300',
+                ];
+                $statusLabels = [
+                    'pending' => 'Ausstehend',
+                    'processing' => 'In Bearbeitung',
+                    'shipped' => 'Versendet',
+                    'completed' => 'Abgeschlossen',
+                    'cancelled' => 'Storniert',
+                ];
+                $color = $statusColor[$order->status] ?? 'bg-gray-100 text-gray-800 border-gray-300';
+                $label = $statusLabels[$order->status] ?? ucfirst($order->status);
+            @endphp
+            <span class="inline-block px-4 py-2 rounded-full border-2 font-semibold text-sm {{ $color }}">
+                Status: {{ $label }}
+            </span>
+        </div>
+
+        <!-- Bestellnummer und Bestelldatum -->
         <div class="border-t border-b py-6 mb-6">
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
