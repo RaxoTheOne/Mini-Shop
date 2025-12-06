@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', $product->name . ' | Mini-Shop')
+
 @section('content')
     <!-- Breadcrumbs -->
     <nav class="mb-4 text-sm" aria-label="Breadcrumb">
