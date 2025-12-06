@@ -134,19 +134,43 @@
         });
     </script>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center">
-                <p class="text-gray-600 text-sm">
-                    &copy; {{ date('Y') }} Mini-Shop. Alle Rechte vorbehalten.
-                </p>
-                <p class="text-gray-500 text-xs mt-2">
-                    Erstellt mit ❤️ und Laravel, Benney der Coolste Programmierer💻
-                </p>
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Mini-Shop</h3>
+                        <p class="text-gray-600 text-sm">
+                            Dein zuverlässiger Online-Shop für alle deine Bedürfnisse.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Schnellzugriff</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>
+                                <a href="{{ route('products.index') }}" class="text-gray-600 hover:text-indigo-600">
+                                    Alle Produkte
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('cart.index') }}" class="text-gray-600 hover:text-indigo-600">
+                                    Warenkorb
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informationen</h3>
+                        <p class="text-gray-600 text-sm">
+                            &copy; {{ date('Y') }} Mini-Shop. Alle Rechte vorbehalten.
+                        </p>
+                        <p class="text-gray-500 text-xs mt-2">
+                            Erstellt mit ❤️ und Laravel, Benney der Coolste Programmierer💻
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 </body>
 
 </html>
