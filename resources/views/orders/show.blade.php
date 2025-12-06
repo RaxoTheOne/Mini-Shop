@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-<!-- Bestellbestätigungsseite -->
+@section('title', 'Bestellung ' . $order->order_number . ' | Mini-Shop')
+
 @section('content')
     <!-- Bestellübersicht -->
     <div class="bg-white shadow rounded-lg p-6 max-w-3xl mx-auto">
