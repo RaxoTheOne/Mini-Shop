@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Warenkorb | Mini-Shop')
+
 @section('content')
     <h1 class="text-2xl font-semibold mb-6">Warenkorb</h1>
 
@@ -124,8 +126,8 @@
                             class="text-indigo-600">{{ number_format($total, 2, ',', '.') }} €</span></p>
                 </div>
                 <div class="space-x-4">
-                    <form action="{{ route('cart.clear') }}" method="POST" class="inline">
-                        onsubmit="return confirm('Möchtest du den Warenkorb wirklich leeren?');"
+                    <form action="{{ route('cart.clear') }}" method="POST" class="inline"
+                        onsubmit="return confirm('Möchtest du den Warenkorb wirklich leeren?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
