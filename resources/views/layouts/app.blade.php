@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini-Shop | Dein Online-Shop</title>
+    <meta name="description" content="Dein zuverlässiger Online-Shop für alle deine Bedürfnisse.">
+    <meta name="keywords" content="Online-Shop, E-Commerce, Produkte, Shopping">
+    <title>@yield('title', 'Mini-Shop | Dein Online-Shop')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
