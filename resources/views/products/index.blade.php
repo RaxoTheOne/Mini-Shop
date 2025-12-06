@@ -124,14 +124,27 @@
             </div>
 
             @if ($products->isEmpty())
-                <div class="bg-white shadow p-6 rounded text-center text-gray-500">
+                <div class="bg-white shadow p-12 rounded-lg text-center">
+                    <div class="mb-6">
+                        <svg class="w-24 h-24 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
                     @if(request('search'))
-                        <p class="mb-4">Keine Produkte gefunden für "{{ request('search') }}".</p>
-                        <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-800">
+                        <h2 class="text-2xl font-semibold text-gray-700 mb-2">Keine Produkte gefunden</h2>
+                        <p class="text-gray-500 mb-4">Es wurden keine Produkte für "{{ request('search') }}" gefunden.</p>
+                        <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                            Alle Produkte anzeigen
+                        </a>
+                    @elseif(isset($category))
+                        <h2 class="text-2xl font-semibold text-gray-700 mb-2">Keine Produkte in dieser Kategorie</h2>
+                        <p class="text-gray-500 mb-4">Die Kategorie "{{ $category->name }}" enthält derzeit keine Produkte.</p>
+                        <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
                             Alle Produkte anzeigen
                         </a>
                     @else
-                        Keine Produkte gefunden.
+                        <h2 class="text-2xl font-semibold text-gray-700 mb-2">Keine Produkte verfügbar</h2>
+                        <p class="text-gray-500">Derzeit sind keine Produkte im Shop verfügbar.</p>
                     @endif
                 </div>
             @else
