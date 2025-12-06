@@ -125,6 +125,7 @@
                 </div>
                 <div class="space-x-4">
                     <form action="{{ route('cart.clear') }}" method="POST" class="inline">
+                        onsubmit="return confirm('Möchtest du den Warenkorb wirklich leeren?');"
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
