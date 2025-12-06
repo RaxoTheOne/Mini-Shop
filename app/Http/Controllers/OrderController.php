@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -38,6 +39,9 @@ class OrderController extends Controller
                 ->with('error', 'Dein Warenkorb ist leer!');
         }
 
+        // Validierte Produkte im Speicher speichern (verhindert Race Conditions)
+        $validatedProducts = [];
+        
         // Prüfe Lagerbestand für alle Produkte im Warenkorb
         foreach ($cart as $id => $item) {
             $product = \App\Models\Product::find($id);
@@ -51,6 +55,9 @@ class OrderController extends Controller
                 return redirect()->route('cart.index')
                     ->with('error', "Nicht genügend Lagerbestand für '{$product->name}'. Verfügbar: {$product->stock} Stück.");
             }
+            
+            // Produkt im Speicher speichern für spätere Verwendung
+            $validatedProducts[$id] = $product;
         }
 
         // Validierung der Bestelldaten
@@ -68,35 +75,68 @@ class OrderController extends Controller
             $total += $item['product']->price * $item['quantity'];
         }
 
-        // Bestellung erstellen
-        $order = Order::create([
-            'order_number' => Order::generateOrderNumber(),
-            'customer_name' => $validated['customer_name'],
-            'customer_email' => $validated['customer_email'],
-            'customer_phone' => $validated['customer_phone'] ?? null,
-            'customer_address' => $validated['customer_address'],
-            'status' => 'pending',
-            'total_amount' => $total,
-            'notes' => $validated['notes'] ?? null,
-        ]);
+        // Datenbank-Transaktion verwenden für atomare Operationen
+        try {
+            DB::beginTransaction();
 
-        // Bestellpositionen erstellen
-        foreach ($cart as $id => $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item['product']->id,
-                'product_name' => $item['product']->name,
-                'price' => $item['product']->price,
-                'quantity' => $item['quantity'],
-                'subtotal' => $item['product']->price * $item['quantity'],
+            // Bestellung erstellen
+            $order = Order::create([
+                'order_number' => Order::generateOrderNumber(),
+                'customer_name' => $validated['customer_name'],
+                'customer_email' => $validated['customer_email'],
+                'customer_phone' => $validated['customer_phone'] ?? null,
+                'customer_address' => $validated['customer_address'],
+                'status' => 'pending',
+                'total_amount' => $total,
+                'notes' => $validated['notes'] ?? null,
             ]);
-        }
 
-        // Lagerbestand reduzieren
-        foreach ($cart as $id => $item) {
-            $product = \App\Models\Product::find($id);
-            $product->stock -= $item['quantity'];
-            $product->save();
+            // Bestellpositionen erstellen
+            foreach ($cart as $id => $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product']->id,
+                    'product_name' => $item['product']->name,
+                    'price' => $item['product']->price,
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['product']->price * $item['quantity'],
+                ]);
+            }
+
+            // Lagerbestand reduzieren - verwende validierte Produkte aus dem Speicher
+            foreach ($cart as $id => $item) {
+                // Verwende das validierte Produkt aus dem Speicher
+                $product = $validatedProducts[$id];
+                
+                // Erneute Prüfung als zusätzliche Sicherheit (falls Produkt zwischenzeitlich gelöscht wurde)
+                $currentProduct = \App\Models\Product::find($id);
+                if (!$currentProduct) {
+                    DB::rollBack();
+                    return redirect()->route('cart.index')
+                        ->with('error', "Produkt '{$product->name}' ist nicht mehr verfügbar. Bitte versuche es erneut.");
+                }
+                
+                // Prüfe erneut den Lagerbestand (könnte sich zwischenzeitlich geändert haben)
+                if ($currentProduct->stock < $item['quantity']) {
+                    DB::rollBack();
+                    return redirect()->route('cart.index')
+                        ->with('error', "Nicht genügend Lagerbestand für '{$product->name}'. Verfügbar: {$currentProduct->stock} Stück.");
+                }
+                
+                // Lagerbestand atomar reduzieren
+                $currentProduct->stock -= $item['quantity'];
+                $currentProduct->save();
+            }
+
+            // Transaktion erfolgreich abschließen
+            DB::commit();
+
+        } catch (\Exception $e) {
+            // Bei Fehler Transaktion rückgängig machen
+            DB::rollBack();
+            
+            return redirect()->route('cart.index')
+                ->with('error', 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
         }
 
         // Warenkorb leeren
