@@ -89,52 +89,75 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Flash Messages -->
-        @if (session('success'))
-            <div
-                class="mb-6 bg-linear-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg shadow-md animate-slide-in">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <p class="text-green-800 font-medium">{{ session('success') }}</p>
-                </div>
-            </div>
-        @endif
+        <!-- Flash Messages - Verbessert -->
+@if (session('success'))
+<div id="flash-success" class="mb-6 bg-linear-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-lg shadow-md flex items-center justify-between group">
+    <div class="flex items-center flex-1">
+        <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+        </svg>
+        <p class="text-green-800 font-medium">{{ session('success') }}</p>
+    </div>
+    <button onclick="this.closest('div').remove()" 
+        class="ml-4 text-green-500 hover:text-green-700 transition-colors shrink-0"
+        aria-label="Schließen">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+@endif
 
-        @if (session('error'))
-            <div class="mb-6 bg-linear-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-md">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <p class="text-red-800 font-medium">{{ session('error') }}</p>
-                </div>
-            </div>
-        @endif
+@if (session('error'))
+<div id="flash-error" class="mb-6 bg-linear-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md flex items-center justify-between group">
+    <div class="flex items-center flex-1">
+        <svg class="w-5 h-5 text-red-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
+        </svg>
+        <p class="text-red-800 font-medium">{{ session('error') }}</p>
+    </div>
+    <button onclick="this.closest('div').remove()" 
+        class="ml-4 text-red-500 hover:text-red-700 transition-colors shrink-0"
+        aria-label="Schließen">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+@endif
 
         @yield('content')
     </main>
 
-    <!-- Auto-Dissmiss für Flash Messages -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashMessages = document.querySelectorAll('[class*="bg-linear-to-r"]');
-            flashMessages.forEach(function(message) {
+    <!-- Auto-Dismiss für Flash Messages - Verbessert -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('#flash-success, #flash-error');
+        flashMessages.forEach(function(message) {
+            // Auto-Dismiss nach 6 Sekunden (länger als vorher für bessere UX)
+            const autoDismiss = setTimeout(function() {
+                message.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-10px)';
                 setTimeout(function() {
-                    message.style.transition = 'opacity 0.5s';
-                    message.style.opacity = '0';
-                    setTimeout(function() {
-                        message.remove();
-                    }, 500);
-                }, 5000); // Nach 5 Sekunden ausblenden
-            });
+                    message.remove();
+                }, 500);
+            }, 6000);
+
+            // Cancel auto-dismiss wenn User manuell schließt
+            const closeButton = message.querySelector('button');
+            if (closeButton) {
+                closeButton.addEventListener('click', function() {
+                    clearTimeout(autoDismiss);
+                });
+            }
         });
-    </script>
+    });
+</script>
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-200 mt-16">
