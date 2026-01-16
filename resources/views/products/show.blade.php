@@ -113,16 +113,25 @@
                     @endif
                 </div>
 
-                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-6">
+                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="cart-form">
                     @csrf
                     <button type="submit"
-                        class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 text-lg font-semibold"
+                        class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold transition-all relative"
                         @if($product->stock <= 0) disabled @endif>
-                        @if($product->stock > 0)
-                            In den Warenkorb
-                        @else
-                            Nicht verfügbar
-                        @endif
+                        <span class="button-text">
+                            @if($product->stock > 0)
+                                In den Warenkorb
+                            @else
+                                Nicht verfügbar
+                            @endif
+                        </span>
+                        <span class="button-loading hidden absolute inset-0 items-center justify-center">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="ml-2">Wird hinzugefügt...</span>
+                        </span>
                     </button>
                 </form>
             </div>
@@ -131,12 +140,15 @@
 
     <!-- Ähnliche Produkte -->
     @php
-        $similarProducts = \App\Models\Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->where('is_active', true)
-            ->where('stock', '>', 0)
-            ->limit(4)
-            ->get();
+        $similarProducts = collect();
+        if ($product->category_id) {
+            $similarProducts = \App\Models\Product::where('category_id', '=', $product->category_id, 'and')
+                ->where('id', '<>', $product->id, 'and')
+                ->where('is_active', '=', true, 'and')
+                ->where('stock', '>', 0, 'and')
+                ->limit(4)
+                ->get();
+        }
     @endphp
 
     @if($similarProducts->count() > 0)
@@ -183,3 +195,20 @@
         </div>
     @endif
 @endsection
+@push('scripts')
+    <script>
+        document.querySelectorAll('.cart-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('button');
+                const text = button.querySelector('.button-text');
+                const loading = button.querySelector('.button-loading');
+                
+                if (text && loading) {
+                    text.classList.add('hidden');
+                    loading.classList.remove('hidden');
+                    button.disabled = true;
+                }
+            });
+        });
+    </script>
+@endpush
