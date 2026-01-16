@@ -23,8 +23,8 @@ class CartController extends Controller
     // Produkt zum Warenkorb hinzufügen
     public function add($id)
     {
-        $product = Product::where('id', $id)
-            ->where('is_active', true)
+        $product = Product::where('id', '=', $id, 'and')
+            ->where('is_active', '=', true, 'and')
             ->firstOrFail();
 
         $cart = session()->get('cart', []);
@@ -33,7 +33,7 @@ class CartController extends Controller
             // Prüfen ob noch genug Lagerbestand vorhanden ist
             if ($cart[$id]['quantity'] >= $product->stock) {
                 return redirect()->back()
-                    ->with('error', 'Produkt ist nicht mehr verfügbar.' . $product->stock);
+                    ->with('error', "Produkt ist nicht mehr verfügbar. Verfügbar: {$product->stock} Stück.");
             }
             $cart[$id]['quantity']++;
         } else {
